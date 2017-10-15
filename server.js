@@ -66,11 +66,11 @@ io.sockets.on('connection', function (socket) {
 //The server recieves the petition from the user to populate the table Query
   	socket.on('populateSQuery', function (term, tf) {
   		//SQL statement to insert values in table
-    	var sql = "INSERT INTO squery VALUES ('"+ term +"', "+ tf +")";
+    	var sql = "INSERT INTO query VALUES ('"+ term +"', "+ tf +")";
 		  con.query(sql, function (err, result) {
 		    if (err) throw err;
 		    //We notify the state of the operation
-		    console.log(term+" inserted in Table SQuery");
+		    console.log(term+" inserted in Table Query");
 		    console.log("---------------------------------");
 		  });
   	});
@@ -93,8 +93,8 @@ io.sockets.on('connection', function (socket) {
   	socket.on('populateWeightQuery', function (optionWeight) {
   		//SQL statement to insert values in table
   		var sql = "";
-    	if(optionWeight=="tfidf") sql = "INSERT INTO weight_q select sum(q.tf * t.idf * q.tf * t.idf ) from squery q, terms t where q.term = t.term";
-    	else sql = "INSERT INTO weight_q select sum((1 + log10(q.tf)) * t.idf * (1 + log10(q.tf)) * t.idf ) from squery q, terms t where q.term = t.term";
+    	if(optionWeight=="tfidf") sql = "INSERT INTO weight_q select sum(q.tf * t.idf * q.tf * t.idf ) from query q, terms t where q.term = t.term";
+    	else sql = "INSERT INTO weight_q select sum((1 + log10(q.tf)) * t.idf * (1 + log10(q.tf)) * t.idf ) from query q, terms t where q.term = t.term";
 		  con.query(sql, function (err, result) {
 		    if (err) throw err;
 		    //We notify the state of the operation
@@ -107,7 +107,7 @@ io.sockets.on('connection', function (socket) {
   	socket.on('getTFIDFDot', function (auth) {
   		if(auth){
   			//SQL statement to get the similarity (dot product)
-  			var sql = "select i.idDoc, sum(q.tf * t.idf * i.tf * t.idf) as similarity from squery q, invertedindex i, terms t where q.term = t.term AND i.term = t.term group by i.IdDoc order by 2 desc";
+  			var sql = "select i.idDoc, sum(q.tf * t.idf * i.tf * t.idf) as similarity from query q, invertedindex i, terms t where q.term = t.term AND i.term = t.term group by i.IdDoc order by 2 desc";
 			  con.query(sql, function (err, result) {
 			    if (err) throw err;
 			    console.log(result);
@@ -122,7 +122,7 @@ io.sockets.on('connection', function (socket) {
   	socket.on('getTFIDFDice', function (auth) {
   		if(auth){
   			//SQL statement to get the similarity (dice coefficient)
-  			var sql = "select i.idDoc, 2*sum(q.tf * t.idf * i.tf * t.idf) / (dw.weight * qw.weight) as similarity from squery q, invertedindex i, terms t, weight_docs dw, weight_q qw where q.term = t.term AND i.term = t.term AND i.idDoc = dw.idDoc group by i.idDoc, dw.weight, qw.weight order by 2 desc";
+  			var sql = "select i.idDoc, 2*sum(q.tf * t.idf * i.tf * t.idf) / (dw.weight * qw.weight) as similarity from query q, invertedindex i, terms t, weight_docs dw, weight_q qw where q.term = t.term AND i.term = t.term AND i.idDoc = dw.idDoc group by i.idDoc, dw.weight, qw.weight order by 2 desc";
 			  con.query(sql, function (err, result) {
 			    if (err) throw err;
 			    console.log(result);
@@ -137,7 +137,7 @@ io.sockets.on('connection', function (socket) {
   	socket.on('getLogDot', function (auth) {
   		if(auth){
   			//SQL statement to get the similarity (dot product)
-  			var sql = "select i.idDoc, sum((1 + log10(q.tf)) * t.idf * (1 + log10(i.tf)) * t.idf) as similarity from squery q, invertedindex i, terms t where q.term = t.term AND i.term = t.term group by i.IdDoc order by 2 desc";
+  			var sql = "select i.idDoc, sum((1 + log10(q.tf)) * t.idf * (1 + log10(i.tf)) * t.idf) as similarity from query q, invertedindex i, terms t where q.term = t.term AND i.term = t.term group by i.IdDoc order by 2 desc";
 			  con.query(sql, function (err, result) {
 			    if (err) throw err;
 			    console.log(result);
@@ -152,7 +152,7 @@ io.sockets.on('connection', function (socket) {
   	socket.on('getLogDice', function (auth) {
   		if(auth){
   			//SQL statement to get the similarity (dot product)
-  			var sql = "select i.idDoc, 2*sum((1 + log10(q.tf)) * t.idf * (1 + log10(i.tf)) * t.idf) / (dw.weight * qw.weight) as similarity from squery q, invertedindex i, terms t, weight_docs dw, weight_q qw where q.term = t.term AND i.term = t.term AND i.idDoc = dw.idDoc group by i.idDoc, dw.weight, qw.weight order by 2 desc";
+  			var sql = "select i.idDoc, 2*sum((1 + log10(q.tf)) * t.idf * (1 + log10(i.tf)) * t.idf) / (dw.weight * qw.weight) as similarity from query q, invertedindex i, terms t, weight_docs dw, weight_q qw where q.term = t.term AND i.term = t.term AND i.idDoc = dw.idDoc group by i.idDoc, dw.weight, qw.weight order by 2 desc";
 			  con.query(sql, function (err, result) {
 			    if (err) throw err;
 			    console.log(result);
@@ -289,11 +289,11 @@ io.sockets.on('connection', function (socket) {
 //The server recieves the petition from the user to clean the tables
   	socket.on('cleanSQuery', function (really) {
 		if(really){	
-    	var sql = "truncate table squery";
+    	var sql = "truncate table query";
 		  con.query(sql, function (err, result) {
 		  	//We notify the state of the operation
 		    if (err) throw err;
-		    console.log("Table SQuery cleaned!");
+		    console.log("Table Query cleaned!");
 		  });
 		}
   	});
