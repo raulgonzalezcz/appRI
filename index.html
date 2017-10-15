@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title> TF, DF, IDF </title>
+    <link href="main.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+</head>
+
+<body>
+
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+    <nav class="nav-bar">
+        <a href="members.html" style="text-decoration: none; color: darkblue; font-size: 1.5rem;"> Members of the team</a>
+    </nav>
+
+    <div class="background-index"> </div>
+
+    <div class="color-container">
+        <div class="index-title">
+                <h2 style="font-weight: bold">SEARCHING </h2>
+                <h2 style="font-weight: 300"> TOOL </h2>
+        </div>
+        <div>
+            <form id="form" class="form-promo" action="#">
+                <h2> Query </h2>
+                <select id="mySpecificQuery" onChange="getSpecificQuery()" >
+                    <option value="-1">Select a pre-defined query...</option> 
+                    <option value="1">what similarity laws must be obeyed when constructing aeroelastic models of heated high speed aircraft</option>
+                    <option value="2">what are the structural and aeroelastic problems associated with flight of high speed aircraft</option>
+                    <option value="4">what problems of heat conduction in composite slabs have been solved so far</option>
+                    <option value="8">can a criterion be developed to show empirically the validity of flow solutions for chemically reacting gas mixtures based on the simplifying assumption of instantaneous local chemical equilibrium</option>
+                    <option value="10">what theoretical and experimental guides do we have as to turbulent couette flow behaviour</option>
+                    <option value="12">is it possible to relate the available pressure distributions for an ogive forebody at zero angle of attack to the lower surface pressures of an equivalent ogive forebody at angle of attack</option>
+                </select>
+                <input id="term" placeholder="Or enter a specific query" style="width:88%; font-size:20px; display:inline"/>
+                <button id="search" onclick="getSimilarityDocs()"></button>
+            </form>
+        </div>
+        <div id='container'>
+        <!-- Use the table to assign alternative schemas. Remember enable getRadioValue() in index.js -->
+        <!--
+            <div class="box">
+                <h2>Schemas</h2>
+                <table align="center">
+                    <tr>
+                        <th style="text-align: center;">Assign weights</th>
+                        <th style="text-align: center;">Calculate similarity</th>
+                    </tr>
+                    <tr>
+                        <th><input type="radio" name="weight" value="tfidf" checked="checked"> TFIDF</th>
+                        <th><input type="radio" name="similarity" value="dotproduct" checked="checked"> Dot product</th>
+                    </tr>
+                    <tr>
+                        <th><input type="radio" name="weight" value="log"> Log TFIDF</th>
+                        <th><input type="radio" name="similarity" value="dice"> Dice coefficient</th>
+                    </tr>
+                </table>
+            </div>
+        -->
+            <div>
+                <h2> Retrieved documents </h2> 
+                <p><ol id="retrDocs"></ol></p>
+                <a href="#" class="previous">&laquo; Previous</a>
+                <a href="#" class="next">Next &raquo;</a>
+
+                <a href="#" class="previous round" onclick="getNewIndexAndRender('prev')">&#8249;</a>
+                <a href="#" class="next round" onclick="getNewIndexAndRender('next')">&#8250;</a>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="index.js"></script>
+
+</body>
+
+</html>

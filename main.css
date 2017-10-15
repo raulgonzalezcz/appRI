@@ -1,0 +1,113 @@
+body {
+  text-align: center;
+  margin: 0; }
+
+.background-index {
+  background-size: cover;
+  width: 100%;
+  height: 100vh;
+  background: #ffffff url(images/albaalum.jpg) top left repeat;
+   }
+
+.color-container {
+  z-index: 999;
+  color: black;
+  margin-top: -105vh;
+  position: relative;
+  font-family: "Raleway", "sans-serif"; }
+
+.index-title {
+  display: -webkit-inline-box; 
+}
+
+.index-title h2 {
+  font-size: 50px;
+  padding-right: 4%; 
+}
+
+#search {
+  cursor: pointer;
+  background:url(images/search-icon.png) no-repeat;
+  background-size: 65%; /* To fill the dimensions of container (button), or */
+  background-position: center;
+  width:35px;
+  height:35px;
+  border: none;
+  background-color: #4CAF50;
+  border-radius: 6px;
+  box-shadow: 0 5px #999;
+  margin: 2%; 
+}
+
+#search:hover {background-color: #3e8e41}
+
+#search:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+.background-members {
+  background-image: url("https://c1.staticflickr.com/5/4058/4660465903_f034723106_b.jpg");
+  background-size: cover;
+  width: 100%;
+  height: 100vh;
+  opacity: 0.3; }
+
+.list-members {
+  margin-top: -100vh;
+  z-index: 999; }
+
+table {
+    border-collapse: collapse;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+#container {
+  display:                 flex;
+  display:                 -webkit-flex; /* Safari 8 */
+  flex-wrap:               wrap;
+  -webkit-flex-wrap:       wrap;         /* Safari 8 */
+  justify-content:         center;
+  -webkit-justify-content: center;       /* Safari 8 */
+}
+
+.box {
+  margin-right: 200px;        
+}
+
+a {
+    text-decoration: none;
+    display: inline-block;
+    padding: 8px 16px;
+}
+
+a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.previous {
+    background-color: #f1f1f1;
+    color: black;
+}
+
+.next {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.round {
+    border-radius: 50%;
+}
+
+/*# sourceMappingURL=main.css.map */
