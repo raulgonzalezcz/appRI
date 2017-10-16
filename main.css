@@ -110,4 +110,9 @@ a:hover {
     border-radius: 50%;
 }
 
+ol.result li {
+    text-align: justify;
+    padding-bottom: 7px;
+}
+
 /*# sourceMappingURL=main.css.map */

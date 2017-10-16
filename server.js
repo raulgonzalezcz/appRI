@@ -107,7 +107,7 @@ io.sockets.on('connection', function (socket) {
   	socket.on('getTFIDFDot', function (auth) {
   		if(auth){
   			//SQL statement to get the similarity (dot product)
-  			var sql = "select i.idDoc, sum(q.tf * t.idf * i.tf * t.idf) as similarity from query q, invertedindex i, terms t where q.term = t.term AND i.term = t.term group by i.IdDoc order by 2 desc";
+  			var sql = "select i.idDoc, sum(q.tf * t.idf * i.tf * t.idf) as similarity from query q, invertedindex i, terms t where q.term = t.term AND i.term = t.term group by i.idDoc order by 2 desc";
 			  con.query(sql, function (err, result) {
 			    if (err) throw err;
 			    console.log(result);
@@ -137,7 +137,7 @@ io.sockets.on('connection', function (socket) {
   	socket.on('getLogDot', function (auth) {
   		if(auth){
   			//SQL statement to get the similarity (dot product)
-  			var sql = "select i.idDoc, sum((1 + log10(q.tf)) * t.idf * (1 + log10(i.tf)) * t.idf) as similarity from query q, invertedindex i, terms t where q.term = t.term AND i.term = t.term group by i.IdDoc order by 2 desc";
+  			var sql = "select i.idDoc, sum((1 + log10(q.tf)) * t.idf * (1 + log10(i.tf)) * t.idf) as similarity from query q, invertedindex i, terms t where q.term = t.term AND i.term = t.term group by i.idDoc order by 2 desc";
 			  con.query(sql, function (err, result) {
 			    if (err) throw err;
 			    console.log(result);
@@ -190,7 +190,7 @@ io.sockets.on('connection', function (socket) {
 	         console.log(documents);
 	         //We evaluate the retrived documents...
 	         for(var i=0;i<docsRetrieved.length;i++){
-	          if(documents.indexOf(docsRetrieved[i].toString()) != -1){ //Relevant document retrieved, then update precisio and recall
+	          if(documents.indexOf(docsRetrieved[i].toString()) != -1){ //Relevant document retrieved, then update precision and recall
 	            docRelevant++;
 	            precision = docRelevant/(i+1);
 	            recall = docRelevant/documents.length;
@@ -280,7 +280,7 @@ io.sockets.on('connection', function (socket) {
 			  con.query(sql, function (err, result) {
 			    if (err) throw err;
 			    //console.log(result);
-			    io.sockets.emit ('sendInformation', result);
+			    io.sockets.emit ('sendInformationSnippet', result, docsRetrieved.length);
 			    console.log("Information sent!");
 			  });
 		}

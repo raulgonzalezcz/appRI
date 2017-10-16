@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" content="width=device-width, initial-scale=1">
     <title> TF, DF, IDF </title>
     <link href="main.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
@@ -24,7 +24,7 @@
                 <h2 style="font-weight: 300"> TOOL </h2>
         </div>
         <div>
-            <form id="form" class="form-promo" action="#">
+            <form id="form" class="form-promo" action="#" onsubmit="getSimilarityDocs();return false">
                 <h2> Query </h2>
                 <select id="mySpecificQuery" onChange="getSpecificQuery()" >
                     <option value="-1">Select a pre-defined query...</option> 
@@ -36,7 +36,7 @@
                     <option value="12">is it possible to relate the available pressure distributions for an ogive forebody at zero angle of attack to the lower surface pressures of an equivalent ogive forebody at angle of attack</option>
                 </select>
                 <input id="term" placeholder="Or enter a specific query" style="width:88%; font-size:20px; display:inline"/>
-                <button id="search" onclick="getSimilarityDocs()"></button>
+                <input type="submit" id="search" value=""/>
             </form>
         </div>
         <div id='container'>
@@ -62,12 +62,12 @@
         -->
             <div>
                 <h2> Retrieved documents </h2> 
-                <p><ol id="retrDocs"></ol></p>
+                <p><ol id="retrDocs" class="result"></ol></p>
                 <a href="#" class="previous">&laquo; Previous</a>
                 <a href="#" class="next">Next &raquo;</a>
 
-                <a href="#" class="previous round" onclick="getNewIndexAndRender('prev')">&#8249;</a>
-                <a href="#" class="next round" onclick="getNewIndexAndRender('next')">&#8250;</a>
+                <a href="#" class="previous round" onclick="previousPage()">&#8249;</a>
+                <a href="#" class="next round" onclick="nextPage()">&#8250;</a>
             </div>
         </div>
     </div>

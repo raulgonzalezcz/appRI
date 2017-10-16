@@ -166,6 +166,7 @@ through the established socket.
   function clearAreaResultSearch(){
     retrDocs.innerHTML = "";
     docsInformation = [];
+    indexSnippet = 0;
   }
 
 //Function to get the specific schema to assign weights and calculate similarity
@@ -257,15 +258,27 @@ to the server to populate the table Query. The result is obtained through the es
 
 //Function to show the area result search
 function showSnippet(){
+  retrDocs.innerHTML = "";
   var stringRes = "";
   console.log(docsInformation);
   for(var i =0; i < 10; i++){
     var entry = document.createElement('li');
     entry.value = indexSnippet+i+1;
-    stringRes = docsInformation[indexSnippet+i].title + "\n" + docsInformation[indexSnippet+i].abstract + "\n";
+    stringRes = docsInformation[indexSnippet+i][0].title + "\n" + docsInformation[indexSnippet+i][0].abstract.substr(0, 150) + "...\n";
     entry.appendChild(document.createTextNode(stringRes));
     retrDocs.appendChild(entry);
   }
+}
+
+//Functions to diplar teh previous/next for the result search
+function nextPage(){
+  indexSnippet += 10;
+  showSnippet();
+}
+
+function previousPage(){
+  indexSnippet -= 10;
+  showSnippet();
 }
 
 /*This function refers that the server send us the result of the similarity through the socket. So we need to traverse it and
@@ -283,18 +296,19 @@ a pre-defined query.
           }
         //alert("Los documentos obtenidos son: \n" + stringRes);
         //retrDocs.innerHTML += stringRes;
+        socket.emit('getSnippetSearch', docsRetrieved);
         if(noQuery!=-1){ //Get precision, recall and f-measure of the program if there was a pre-defined document
-          //socket.emit('getSnippetSearch', docsRetrieved);
           socket.emit('getPrecisionRecall', noQuery, docsRetrieved);
           socket.emit('getFMeasure', noQuery, docsRetrieved);
         }
     });
 
 
-    socket.on ('sendInformation', function (result) {
-      console.log(result);
+    socket.on ('sendInformationSnippet', function (result, totalDocs) {
+      //console.log(result);
       docsInformation.push(result);
-      showSnippet();
+      //When we recieve all the information, we display it
+      if(docsInformation.length == totalDocs) showSnippet();
     });
 
 /*This function get the response of the server when we need to evaluate the efficiency of the program, so we add each result
