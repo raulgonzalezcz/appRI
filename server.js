@@ -168,7 +168,7 @@ io.sockets.on('connection', function (socket) {
 //The server recieves the petition from the user to get the efficiency of the program
   	socket.on('getPrecisionRecall', function (noQuery, docsRetrieved) {  
   	//Read the content of the file to get the relevant documents for the query	
-  		fs.readFile('/Users/Raúl/Desktop/Recuperacion web/protoApp/cran1400/cranqrel.txt', 'utf8', function (err,data) {
+  		fs.readFile('collections/cranqrel.txt', 'utf8', function (err,data) {
   		//Variables to calculate precision and recall
   		var documents = [];
   		var efficiency = [];
@@ -220,7 +220,7 @@ io.sockets.on('connection', function (socket) {
 
   	socket.on('getFMeasure', function (noQuery, docsRetrieved) {  
   	//Read the content of the file to get the relevant documents for the query	
-  		fs.readFile('/Users/Raúl/Desktop/Recuperacion web/protoApp/cran1400/cranqrel.txt', 'utf8', function (err,data) {
+  		fs.readFile('collections/cranqrel.txt', 'utf8', function (err,data) {
   		//Variables to calculate precision and recall
   		var documents = [];
   		var efficiency = [];
@@ -276,7 +276,7 @@ io.sockets.on('connection', function (socket) {
 		//SQL statement to get the information for docs
 		var sql;
 		for(var i=0; i < docsRetrieved.length; i++){
-			sql = "select title, abstract from docs where idDoc = " + docsRetrieved[i];
+			sql = "select title, abstract, idDoc from docs where idDoc = " + docsRetrieved[i];
 			  con.query(sql, function (err, result) {
 			    if (err) throw err;
 			    //console.log(result);

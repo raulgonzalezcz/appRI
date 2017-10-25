@@ -9,6 +9,10 @@
     var resFMeasure = [];
     var docsInformation = [];
     var indexSnippet = 0;
+    var dict = {};
+    var dictA = {};
+    var timesFeedback = 0;
+    beta=1;
 //Variables for TF in a specific document
     var tf = 0 ;
     var file;
@@ -54,7 +58,7 @@ socket.on("connect", function () { //Connection was established
   console.log("Connected to server!");
 });
 
-//Function to clear the data after searching a term
+//Function to clear the data after searching a term and adding to database
     function clearData(){
       docnum = 0;
       df = 0;
@@ -169,6 +173,16 @@ through the established socket.
     indexSnippet = 0;
   }
 
+//Function to clear the arrays for retrieving idDocs´s
+  function clearArrays(){
+    dict = {};
+    resPrecisionRecall = [];
+    resPrecisionRecall[0] = ['idDoc','noDoc','precision', 'recall'];
+    resFMeasure = [];
+    resFMeasure[0] = ['idDoc','noDoc','precision', 'recall'];
+    timesFeedback = 0;
+  }  
+
 //Function to get the specific schema to assign weights and calculate similarity
     function getRadioValue(){
       for (var i = 0; i < document.getElementsByName('weight').length; i++){
@@ -191,22 +205,24 @@ the documents in the collection. In both cases we get all the terms in te query 
 to the server to populate the table Query. The result is obtained through the established socket
 */
     function getSimilarityDocs(){
-      //We need to clean the table Query in order to evaluate new queries
-        socket.emit('cleanSQuery', true);
-        socket.emit('cleanWeight_docs', true);
-        socket.emit('cleanWeight_q', true);
-      var terms;
-      //getRadioValue(); //NOTE: Use this function when we need to assign alternative schemas
+      //We need to clean the table Query in order to evaluate new queries and the data related to a previous query operation.
+      //If we also need to clean the tables for Dice coefficient, set the property to "true"
+      socket.emit('cleanSQuery', true);
+      socket.emit('cleanWeight_docs', false);
+      socket.emit('cleanWeight_q', false);
+      clearArrays();
       //Clear the area where we show the result search to the user
       clearAreaResultSearch();
+      var terms;
+      //NOTE: Use this function when we need to assign alternative schemas. You need also to check the HTML
+      //getRadioValue();
       if(noQuery!=-1){ //It´s a pre-defined query
         terms = specificQuery.split(" ");
         nameOfCSVPR='Q'+noQuery.toString()+"-";
         nameOfCSVF='Q'+noQuery.toString()+"-";
-      }else{ //The query was introduced by the user
+      }else{ //The query was introduced by the user. We cannot generate a CSV calculating precision, recall and F-Measure
         terms = term.value.split(" ");
       }
-      var dict = {};
       //Generate the dictionary where key is term and value is tf
         for(var i=0;i<terms.length;i++){
           if (terms[i] in dict) {
@@ -217,6 +233,62 @@ to the server to populate the table Query. The result is obtained through the es
         }
         //Check the structure is ok
         console.log(dict);
+        //Send Term and tf to server to populate the table Query
+        for (var key in dict){
+          //Term and tf
+          socket.emit('populateSQuery', key, dict[key]);
+        }
+        //Once we populate the table Query, we proceed to get the similarity of the documents according to an option:
+        if(optionWeight=="tfidf" && optionSimilarity=="dotproduct") {
+          socket.emit('getTFIDFDot', true);
+          nameOfCSVPR+="TFIDFDot-PR.csv";
+          nameOfCSVF+="TFIDFDot-F.csv";
+        }
+        if(optionWeight=="tfidf" && optionSimilarity=="dice") {
+          socket.emit('populateWeightDocs', optionWeight);
+          socket.emit('populateWeightQuery', optionWeight);
+          socket.emit('getTFIDFDice', true);
+          nameOfCSVPR+="TFIDFDice-PR.csv";
+          nameOfCSVF+="TFIDFDice-F.csv";
+        }
+        if(optionWeight=="log" && optionSimilarity=="dotproduct") {
+          socket.emit('getLogDot', true);
+          nameOfCSVPR+="LogDot-PR.csv";
+          nameOfCSVF+="LogDot-F.csv";
+        }
+        if(optionWeight=="log" && optionSimilarity=="dice") {
+          socket.emit('populateWeightDocs', optionWeight);
+          socket.emit('populateWeightQuery', optionWeight);
+          socket.emit('getLogDice', true);
+          nameOfCSVPR+="LogDice-PR.csv";
+          nameOfCSVF+="LogDice-F.csv";
+        }
+    }
+
+//Function to do feedback
+function doFeedBack(){
+  if(noQuery!=-1){ //It´s a pre-defined query
+        nameOfCSVPR='Q'+noQuery.toString()+"-";
+        nameOfCSVF='Q'+noQuery.toString()+"-";
+      }else{ //The query was introduced by the user
+      }
+      //Generate the dictionary where key is term and value is tf
+        for(var i=0;i<5;i++){
+          var terms = docsInformation[i][0].title.split(" ");
+          for(var j=0; j<terms.length;j++){
+            var replacedLine = terms[j].replace(/\,|\(|\)|\.|\/|\?/g , "").replace(/'/g , "´");
+            if (replacedLine in dict) {
+              dict[replacedLine] += 1*beta;
+            } else {
+              dict[replacedLine] = 1*beta;
+            }
+          }
+        }
+        //Check the structure is ok
+        console.log(dict);
+        //Truncate table query
+        socket.emit('cleanSQuery', true);
+        docsInformation = [];
         //Send Term and tf to server to populate the table Query
         for (var key in dict){
           //Term and tf
@@ -247,7 +319,8 @@ to the server to populate the table Query. The result is obtained through the es
           nameOfCSVPR+="LogDice-PR.csv";
           nameOfCSVF+="LogDice-F.csv";
         }
-    }
+}
+
 
 //Function that allow us to know if there is a pre-defined query (noQuery must be distinct of "-1")
     function getSpecificQuery(){
@@ -260,13 +333,19 @@ to the server to populate the table Query. The result is obtained through the es
 function showSnippet(){
   retrDocs.innerHTML = "";
   var stringRes = "";
-  console.log(docsInformation);
+  //console.log(docsInformation);
   for(var i =0; i < 10; i++){
     var entry = document.createElement('li');
     entry.value = indexSnippet+i+1;
     stringRes = docsInformation[indexSnippet+i][0].title + "\n" + docsInformation[indexSnippet+i][0].abstract.substr(0, 150) + "...\n";
     entry.appendChild(document.createTextNode(stringRes));
     retrDocs.appendChild(entry);
+  }
+  //Run feedback
+  if(timesFeedback < 2){
+    alert("Feedback");
+    doFeedBack();
+    timesFeedback++;
   }
 }
 
@@ -327,16 +406,10 @@ a pre-defined query.
 // And then we invoke the function to generate the csv.
     socket.on ('generateCSVPR', function (auth) {
       exportToCsvPR(nameOfCSVPR, resPrecisionRecall);
-      //Reset the index for new queries
-      resPrecisionRecall = [];
-      resPrecisionRecall[0] = ['idDoc','noDoc','precision', 'recall'];
     });
 
     socket.on ('generateCSVF', function (auth) {
       exportToCsvF(nameOfCSVF, resFMeasure);
-      //Reset the index for new queries
-      resFMeasure = [];
-      resFMeasure[0] = ['idDoc','noDoc','precision', 'recall'];
     });
 
 /*This function generate the CSV to evaluate the program. We establish the number of rows and traverse each one to generate

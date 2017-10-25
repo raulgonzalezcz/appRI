@@ -24,6 +24,10 @@
                 <h2 style="font-weight: 300"> TOOL </h2>
         </div>
         <div>
+            <form id="form" class="form-promo" action="#" onsubmit="populateDB();return false">
+                <input type="file" id="fileInput">
+                <input type="submit" id="populateDB" value="Poblar base de datos"/>
+            </form>
             <form id="form" class="form-promo" action="#" onsubmit="getSimilarityDocs();return false">
                 <h2> Query </h2>
                 <select id="mySpecificQuery" onChange="getSpecificQuery()" >
@@ -63,9 +67,6 @@
             <div>
                 <h2> Retrieved documents </h2> 
                 <p><ol id="retrDocs" class="result"></ol></p>
-                <a href="#" class="previous">&laquo; Previous</a>
-                <a href="#" class="next">Next &raquo;</a>
-
                 <a href="#" class="previous round" onclick="previousPage()">&#8249;</a>
                 <a href="#" class="next round" onclick="nextPage()">&#8250;</a>
             </div>
